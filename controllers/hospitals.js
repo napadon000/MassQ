@@ -5,11 +5,12 @@ const Hospital = require('../models/Hospital');
 //@access Public
 exports.getHospitals = async(req, res, next) => {
     try {
-        const hospital = await Hospital.find();
+        const hospitals = await Hospital.find();
 
         res.status(200).json({
-            success: true, 
-            data: hospital
+            success: true,
+            count: hospitals.length,
+            data: hospitals
         });
     } catch (error) {
         res.status(400).json({success: false});
