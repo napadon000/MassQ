@@ -10,6 +10,7 @@ exports.protect = async (req,res,next) => {
     }
 
     //Make sure token exists
+    console.log(token);
     if (!token) {
         return res.status(401).json({
             success: false,
@@ -43,5 +44,5 @@ exports.authorize = (...roles) => {
             });
         }
         next();
-    }
+        }
 }
