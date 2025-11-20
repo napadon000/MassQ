@@ -1,4 +1,6 @@
 const History = require('../models/History');
+const MassageShop = require('../models/MassageShop');
+const analyzeSentiment = require('../services/sentiment');
 
 //@desc Get all histories
 //@route GET /api/v1/histories
@@ -162,13 +164,10 @@ exports.createHistory = async (req, res, next) => {
 
 //@desc Update history
 //@route PUT /api/v1/histories/:id
-//@access Private (Admin only)
+//@access Private
 exports.updateHistory = async (req, res, next) => {
     try {
-        const history = await History.findByIdAndUpdate(req.params.id, req.body, {
-            new: true,
-            runValidators: true
-        });
+        const history = await History.findById(req.params.id);
 
         if (!history) {
             return res.status(404).json({
@@ -176,6 +175,49 @@ exports.updateHistory = async (req, res, next) => {
                 message: 'History not found'
             });
         }
+
+        //owner checking
+        if (history.user.toString() !== req.user.id && req.user.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'Not authorized to update this history'
+            });
+        }
+
+        //if not admin, allow only review update
+        if (req.user.role !== 'admin') {
+            const updates = Object.keys(req.body);
+            const isValidOperation = updates.every(update => update==='review');
+            if (!isValidOperation) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Not authorized to update these fields'
+                });
+            }
+
+            if (history.status !== 'completed') {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Cannot submit review for incomplete history'
+                });
+            }
+
+            if (history.review) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Review already submitted, cannot update'
+                });
+            }
+        }
+        if (req.body.review) {
+          const rating = await analyzeSentiment(req.body.review);
+          req.body.rating = rating;
+        }
+
+        //update
+        history.set(req.body, null, { strict: false });
+        await history.save();
+        console.log(req.body);
 
         res.status(200).json({
             success: true,
@@ -191,7 +233,7 @@ exports.updateHistory = async (req, res, next) => {
 
 //@desc Delete history
 //@route DELETE /api/v1/histories/:id
-//@access Private
+//@access Private (allow only admin)
 exports.deleteHistory = async (req, res, next) => {
     try {
         const history = await History.findById(req.params.id);

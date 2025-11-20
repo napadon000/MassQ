@@ -44,6 +44,12 @@ const MassageShopSchema = new mongoose.Schema({
         required: [true, 'Please add timeslot capacity'],
         min: [1, 'Timeslot capacity must be at least 1']
     },
+    // rating: {
+    //     type: Number,
+    //     min: [1, 'Rating must be at least 1'],
+    //     max: [5, 'Rating cannot be more than 5'],
+    //     default: null
+    // },
     // services: [
     //     {
     //         name: {
@@ -73,5 +79,12 @@ MassageShopSchema.virtual('reservations', {
     foreignField: 'massageShop',
     justOne: false
 });
+
+MassageShopSchema.virtual('reviews', {
+  ref: 'History',
+  localField: '_id',
+  foreignField: 'massageShop',
+  justOne: false
+})
 
 module.exports = mongoose.model('MassageShop', MassageShopSchema);

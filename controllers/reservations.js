@@ -316,19 +316,16 @@ exports.updateReservation = async (req, res, next) => {
                  message: 'The new reservation date is the same as the current one'
              });
            };
-        }
 
+           // check will be if waitlisted or confirmed after update
+           await checkTimeslotAvailability(massageShop._id,req.body.reservationDate, req);
 
-        if (req.body.reservationDate) {
-          // check will be if waitlisted or confirmed after update
-          await checkTimeslotAvailability(massageShop._id,req.body.reservationDate, req);
-
-          // If it was a confirmed reservation, promote waitlist
-          if (wasConfirmed) {
-              await promoteWaitlist(massageShop._id, reservation.reservationDate, 0);
-          } else {
-              await promoteWaitlist(massageShop._id, reservation.reservationDate, reservation.waitlistPosition);
-          }
+           // If it was a confirmed reservation, promote waitlist
+           if (wasConfirmed) {
+               await promoteWaitlist(massageShop._id, reservation.reservationDate, 0);
+           } else {
+               await promoteWaitlist(massageShop._id, reservation.reservationDate, reservation.waitlistPosition);
+           }
         }
 
         reservation = await Reservation.findByIdAndUpdate(req.params.id, req.body, {
@@ -372,6 +369,23 @@ exports.deleteReservation = async(req, res, next) => {
             });
         }
 
+        await reservation.deleteOne();
+
+        if (req.user.role === 'admin' && req.body.status === 'completed') {
+            await History.create({
+                reservation: reservation._id,
+                user: reservation.user,
+                massageShop: reservation.massageShop,
+                reservationDate: reservation.reservationDate,
+                status: "completed",
+            });
+            return res.status(200).json({
+                success:true,
+                data: {},
+                message: 'Reservation completed and moved to history'
+            });
+        }
+
         // Store reservation details before deletion
         const massageShopId = reservation.massageShop;
         const reservationDate = reservation.reservationDate;
@@ -384,7 +398,6 @@ exports.deleteReservation = async(req, res, next) => {
             reservationDate: reservation.reservationDate,
             status: "cancelled",
         });
-        await reservation.deleteOne();
 
         // If it was a confirmed reservation, promote waitlist
         if (wasConfirmed) {

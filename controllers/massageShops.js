@@ -1,5 +1,6 @@
 const MassageShop = require('../models/MassageShop');
 const Reservation = require('../models/Reservation');
+const History = require('../models/History');
 
 const generateTimeslots = (openTime, closeTime, capacity, slotDuration) => {
     const timeslots = [];
@@ -76,6 +77,19 @@ const checkTimeslotAvailability = async (massageShopId, date, timeslots) => {
     }));
 };
 
+const getRating = async (messageShopId) => {
+  const ratings = await History.find({
+    massageShop: messageShopId,
+    rating: { $ne: null }
+  }).select('rating -_id');
+
+  if (ratings.length === 0) {
+    return null;
+  }
+  const total = ratings.reduce((sum, record) => sum + record.rating, 0);
+  return total / ratings.length;
+};
+
 //@desc Get all massage shops
 //@route GET /api/v1/massageshops
 //@access Public
@@ -100,7 +114,31 @@ exports.getMassageShops = async(req, res, next) => {
     queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
 
     //finding resource
-    query = MassageShop.find(JSON.parse(queryStr)).populate('reservations');
+    if (req.user.role === 'admin') {
+      query = MassageShop.find(JSON.parse(queryStr)).populate([
+        {
+          path: 'reservations'
+        },
+        {
+          path: 'reviews',
+          match: {
+            status: 'completed',
+            review: { $ne: null },
+          },
+          select: 'review -massageShop',
+        },
+      ]);
+    } else {
+      query = MassageShop.find(JSON.parse(queryStr)).populate([
+        {
+          path: 'reviews',
+          match: {
+            status: 'completed',
+            review: { $ne: null },
+          },
+          select: 'review -_id -massageShop',
+      }]);
+    }
 
     //select Fields
     if (req.query.select) {
@@ -145,6 +183,13 @@ exports.getMassageShops = async(req, res, next) => {
                 limit
             }
         }
+
+        //add rating for each massage shop
+        for (let i = 0; i < massageShops.length; i++) {
+          const rating = await getRating(massageShops[i]._id);
+          massageShops[i] = massageShops[i].toObject();
+          massageShops[i].rating = rating;
+        };
 
         res.status(200).json({
             success: true,

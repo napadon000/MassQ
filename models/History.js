@@ -24,11 +24,20 @@ const HistorySchema = new mongoose.Schema({
         enum: ['completed', 'cancelled', 'no-show'],
         required: true
     },
-    endedAt: {
-        type: Date,
-        default: Date.now
+    // endedAt: {
+    //     type: Date,
+    //     default: Date.now
+    // },
+    review: {
+      type: String,
+      default: null
     },
-    // review: String,
+    rating: {
+      type: Number,
+      min: [1, 'Rating must be at least 1'],
+      max: [5, 'Rating cannot be more than 5'],
+      default: null
+    },
     createdAt: {
         type: Date,
         default: Date.now

@@ -1,0 +1,11 @@
+[project]
+name = "sentimentanalyzer"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi[standard]>=0.121.3",
+    "torch>=2.9.1",
+    "transformers>=4.57.1",
+]
