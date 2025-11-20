@@ -19,7 +19,8 @@ const generateTimeslots = (openTime, closeTime, capacity, slotDuration) => {
         timeslots.push({
             time: timeString,
             capacity: capacity,
-            available: capacity
+            available: capacity,
+            waitinglist: 0,
         });
     }
 
@@ -27,7 +28,7 @@ const generateTimeslots = (openTime, closeTime, capacity, slotDuration) => {
 };
 
 const checkTimeslotAvailability = async (massageShopId, date, timeslots) => {
-    // Get all confirmed  reservations for this shop on this date
+    // Get all confirmed  reservations for this shop off this date
     // e.g. ?date=2025-10-23
     const startOfDay = new Date(date);
     startOfDay.setHours(0, 0, 0, 0);
@@ -37,25 +38,40 @@ const checkTimeslotAvailability = async (massageShopId, date, timeslots) => {
     const reservations = await Reservation.find({
         massageShop: massageShopId,
         reservationDate: { $gte: startOfDay, $lte: endOfDay },
-        status: 'Confirmed',
+        // status: 'confirmed',
         isWaitlist: false
     });
 
+    const waitlistReservations = await Reservation.find({
+        massageShop: massageShopId,
+        reservationDate: { $gte: startOfDay, $lte: endOfDay },
+        isWaitlist: true
+    });
+
+    // console.log(reservations);
     // Count reservations per timeslot (extract hour and minute from reservationDate)
     const timeslotCounts = {};
     reservations.forEach(reservation => {
         const resDate = new Date(reservation.reservationDate);
-        const hour = resDate.getHours();
-        const minute = resDate.getMinutes();
+        const hour = resDate.getUTCHours();
+        const minute = resDate.getUTCMinutes();
         const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
         timeslotCounts[timeString] = (timeslotCounts[timeString] || 0) + 1;
     });
-
-
+    // console.log(timeslotCounts);
+  const waitCounts = {};
+  waitlistReservations.forEach(reservation => {
+    const resDate = new Date(reservation.reservationDate);
+    const hour = resDate.getUTCHours();
+    const minute = resDate.getUTCMinutes();
+    const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+    waitCounts[timeString] = (waitCounts[timeString] || 0) + 1;
+  });
     // Update available capacity
     return timeslots.map(slot => ({
         ...slot,
         available: slot.capacity - (timeslotCounts[slot.time] || 0),
+        waitinglist: waitCounts[slot.time] || 0,
         // isFull: (slot.capacity - (timeslotCounts[slot.time] || 0)) <= 0
     }));
 };
@@ -71,7 +87,7 @@ exports.getMassageShops = async(req, res, next) => {
 
     //Fields to exclude
     const removeFields = ['select', 'sort'];
-    console.log(req.query);
+    // console.log(req.query);
 
     //Loop over remove fields and delete them from reqQuery
     removeFields.forEach(param => delete reqQuery[param]);
@@ -152,18 +168,16 @@ exports.getMassageShop = async (req, res, next) => {
             return res.status(404).json({success: false, message: 'Massage shop not found'});
         }
 
-        // Generate timeslots with custom duration
-        const timeslots = generateTimeslots(
-            massageShop.openTime,
-            massageShop.closeTime,
-            massageShop.timeslotCapacity,
-            massageShop.slotDuration
-        );
-
-        // If date is provided, check availability for that date
-        let timeslotsWithAvailability = timeslots;
-        console.log(timeslotsWithAvailability);
+        let timeslotsWithAvailability = null;
         if (req.query.date) {
+          // Generate timeslots with custom duration
+          const timeslots = generateTimeslots(
+              massageShop.openTime,
+              massageShop.closeTime,
+              massageShop.timeslotCapacity,
+              massageShop.slotDuration
+          );
+
           //validate query.date = yaer-month-day formation only
           if (!/^\d{4}-\d{2}-\d{2}$/.test(req.query.date)) {
               return res.status(400).json({success: false, message: 'Invalid date format. Use YYYY-MM-DD.'});
@@ -173,8 +187,7 @@ exports.getMassageShop = async (req, res, next) => {
                 req.query.date,
                 timeslots
             );
-        }
-        // console.log(timeslotsWithAvailability);
+        };
 
         res.status(200).json({
             success: true,

@@ -13,6 +13,7 @@ connectDB();
 const massageShops = require('./routes/massageShops');
 const auth = require('./routes/auth');
 const reservations = require('./routes/reservations');
+const histories = require('./routes/histories');
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.set('query parser', 'extended')
 app.use('/api/v1/massageshops', massageShops);
 app.use('/api/v1/auth', auth);
 app.use('/api/v1/reservations', reservations);
+app.use('/api/v1/histories', histories);
 
 const PORT = process.env.PORT || 5000;
 

@@ -18,11 +18,20 @@ const MassageShopSchema = new mongoose.Schema({
     },
     openTime: {
         type: String,
-        required: [true, 'Please add opening time']
+        required: [true, 'Please add opening time'],
+        //validate openTime is xx:xx 24hours format
+        match: [
+            /^([01]\d|2[0-3]):([0-5]\d)$/,
+            'Please add a valid opening time in HH:MM 24-hour format'
+        ]
     },
     closeTime: {
         type: String,
-        required: [true, 'Please add closing time']
+        required: [true, 'Please add closing time'],
+        match: [
+                    /^([01]\d|2[0-3]):([0-5]\d)$/,
+                    'Please add a valid opening time in HH:MM 24-hour format'
+                ]
     },
     slotDuration: {
         type: Number,
@@ -35,23 +44,23 @@ const MassageShopSchema = new mongoose.Schema({
         required: [true, 'Please add timeslot capacity'],
         min: [1, 'Timeslot capacity must be at least 1']
     },
-    services: [
-        {
-            name: {
-                type: String,
-                required: [true, 'Please add service name']
-            },
-            description: {
-                type: String,
-                required: [true, 'Please add service description']
-            },
-            price: {
-                type: Number,
-                required: [true, 'Please add service price'],
-                min: [0, 'Price cannot be negative']
-            }
-        }
-    ]
+    // services: [
+    //     {
+    //         name: {
+    //             type: String,
+    //             required: [true, 'Please add service name']
+    //         },
+    //         description: {
+    //             type: String,
+    //             required: [true, 'Please add service description']
+    //         },
+    //         price: {
+    //             type: Number,
+    //             required: [true, 'Please add service price'],
+    //             min: [0, 'Price cannot be negative']
+    //         }
+    //     }
+    // ]
 }, {
     toJSON: {virtuals:true},
     toObject : {virtuals:true}

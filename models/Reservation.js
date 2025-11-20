@@ -15,18 +15,18 @@ const ReservationSchema = new mongoose.Schema({
         ref: 'MassageShop',
         required: true
     },
-    // isWaitlist: {
-    //     type: Boolean,
-    //     default: false
-    // },
+    isWaitlist: {
+        type: Boolean,
+        default: false
+    },
     waitlistPosition: {
         type: Number,
     },
-    status: {
-        type: String,
-        enum: ['confirmed','completed', 'cancelled', 'waitlisted'],
-        default: 'confirmed'
-    },
+    // status: {
+    //     type: String,
+    //     enum: ['confirmed', 'waitlisted'],
+    //     default: 'confirmed'
+    // },
     createdAt: {
         type: Date,
         default: Date.now
