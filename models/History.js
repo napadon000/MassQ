@@ -24,10 +24,6 @@ const HistorySchema = new mongoose.Schema({
         enum: ['completed', 'cancelled'],
         required: true
     },
-    // endedAt: {
-    //     type: Date,
-    //     default: Date.now
-    // },
     review: {
       type: String,
       default: null

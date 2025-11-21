@@ -22,11 +22,6 @@ const ReservationSchema = new mongoose.Schema({
     waitlistPosition: {
         type: Number,
     },
-    // status: {
-    //     type: String,
-    //     enum: ['confirmed', 'waitlisted'],
-    //     default: 'confirmed'
-    // },
     createdAt: {
         type: Date,
         default: Date.now

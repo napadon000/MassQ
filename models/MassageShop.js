@@ -44,29 +44,6 @@ const MassageShopSchema = new mongoose.Schema({
         required: [true, 'Please add timeslot capacity'],
         min: [1, 'Timeslot capacity must be at least 1']
     },
-    // rating: {
-    //     type: Number,
-    //     min: [1, 'Rating must be at least 1'],
-    //     max: [5, 'Rating cannot be more than 5'],
-    //     default: null
-    // },
-    // services: [
-    //     {
-    //         name: {
-    //             type: String,
-    //             required: [true, 'Please add service name']
-    //         },
-    //         description: {
-    //             type: String,
-    //             required: [true, 'Please add service description']
-    //         },
-    //         price: {
-    //             type: Number,
-    //             required: [true, 'Please add service price'],
-    //             min: [0, 'Price cannot be negative']
-    //         }
-    //     }
-    // ]
 }, {
     toJSON: {virtuals:true},
     toObject : {virtuals:true}
