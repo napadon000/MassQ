@@ -22,7 +22,7 @@ class Response(BaseModel):
 
 @app.post("/api/v1/sentiment", response_model=Response)
 def sentiment_analysis(request: Request):
-    print(Request)
     scores = analyze(request.text)
-    positive, negative = scores
+    print(scores)
+    negative,positive = scores
     return Response(positive=positive, negative=negative)
