@@ -1,5 +1,4 @@
 const History = require('../models/History');
-const MassageShop = require('../models/MassageShop');
 const analyzeSentiment = require('../services/sentiment');
 
 //@desc Get all histories
