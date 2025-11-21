@@ -230,31 +230,3 @@ exports.updateHistory = async (req, res, next) => {
         });
     }
 };
-
-//@desc Delete history
-//@route DELETE /api/v1/histories/:id
-//@access Private (allow only admin)
-exports.deleteHistory = async (req, res, next) => {
-    try {
-        const history = await History.findById(req.params.id);
-
-        if (!history) {
-            return res.status(404).json({
-                success: false,
-                message: 'History not found'
-            });
-        }
-
-        await History.deleteOne({ _id: req.params.id });
-
-        res.status(200).json({
-            success: true,
-            data: {}
-        });
-    } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: error.message
-        });
-    }
-};

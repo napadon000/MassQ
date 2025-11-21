@@ -114,7 +114,7 @@ exports.getMassageShops = async(req, res, next) => {
     queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
 
     //finding resource
-    if (req.user.role === 'admin') {
+    if (req.user && req.user.role === 'admin') {
       query = MassageShop.find(JSON.parse(queryStr)).populate([
         {
           path: 'reservations'

@@ -4,7 +4,6 @@ const {
     getHistory,
     createHistory,
     updateHistory,
-    deleteHistory
 } = require('../controllers/histories');
 
 const router = express.Router();
@@ -21,6 +20,6 @@ router.route('/').get(getHistories).post(authorize('admin'), createHistory);
 // GET single history (user can get their own, admin can get any)
 // PUT update history (admin only)
 // DELETE delete history (admin only)
-router.route('/:id').get(getHistory).put(authorize('admin','user'), updateHistory).delete(authorize('admin'), deleteHistory);
+router.route('/:id').get(getHistory).put(authorize('admin', 'user'), updateHistory);
 
 module.exports = router;
