@@ -21,7 +21,7 @@ const HistorySchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['completed', 'cancelled', 'no-show'],
+        enum: ['completed', 'cancelled'],
         required: true
     },
     // endedAt: {
