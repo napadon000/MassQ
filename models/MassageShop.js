@@ -12,6 +12,19 @@ const MassageShopSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please add an address']
     },
+    district: {
+        type: String,
+        required: [true, 'Please add a district']
+    },
+    province: {
+        type: String,
+        required: [true, 'Please add a province']
+    },
+    postalcode: {
+        type: String,
+        required: [true, 'Please add a postal code'],
+        maxlength: [5, 'Postal code cannot be more than 5 digits']
+    },
     tel: {
         type: String,
         required: [true, 'Please add a telephone number']
