@@ -7,7 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "concurrently \"npm:dev:node\" \"npm:dev:fastapi\"",
     "dev:node": "nodemon server.js",
-    "dev:fastapi": "set PYTHONIOENCODING=utf-8 && cd services/sentimentAnalyzer && uv run fastapi dev app.py --port 9000"
+    "dev:fastapi": "set PYTHONIOENCODING=utf-8 && cd services/sentimentAnalyzer && uv run fastapi dev app.py --port 9000",
+    "start": "concurrently \"npm:start:node\" \"npm:start:fastapi\"",
+    "start:node": "node server.js",
+    "start:fastapi": "set PYTHONIOENCODING=utf-8 && cd services/sentimentAnalyzer && uv run fastapi run app.py --port 9000"
   },
   "author": "",
   "license": "ISC",
