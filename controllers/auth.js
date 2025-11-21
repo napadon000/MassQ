@@ -36,7 +36,7 @@ exports.register = async (req, res, next) => {
     });
     //create token
     // const token = user.getSignedJwtToken();
-    
+
     // res.status(200).json({
     //   success: true,
     //   token
@@ -99,4 +99,16 @@ exports.getMe = async (req, res, next) => {
         success: true,
         data: user
     });
+}
+
+exports.logout = async (req, res, next) => {
+
+  res.status(200).cookie("token", "", {
+    httpOnly: true,
+    expires: new Date(Date.now() + 10 * 1000),
+    secure: process.env.NODE_ENV === "production" ? true : false,
+  }).json({
+    success: true,
+    msg: "User logged out successfully",
+  });
 }
