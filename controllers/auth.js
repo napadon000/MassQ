@@ -101,6 +101,9 @@ exports.getMe = async (req, res, next) => {
     });
 }
 
+//@desc Log user out / clear cookie
+//@route POST /api/v1/auth/logout
+//@access Private
 exports.logout = async (req, res, next) => {
 
   res.status(200).cookie("token", "", {
