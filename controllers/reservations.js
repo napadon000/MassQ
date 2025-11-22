@@ -131,7 +131,7 @@ exports.getReservations = async (req, res, next) => {
             user: req.user.id,
         }).populate({
             path: 'massageShop',
-            select: 'name address tel openTime closeTime waiatlistPosition'
+            select: 'name address tel openTime closeTime'
         });
     } else { // If you are an admin you can see all active reservations
         if (req.params.massageShopId) {
@@ -140,12 +140,12 @@ exports.getReservations = async (req, res, next) => {
                 massageShop: req.params.massageShopId,
             }).populate({
                 path: 'massageShop',
-                select: 'name address tel openTime closeTime waiatlistPosition'
+                select: 'name address tel openTime closeTime'
             });
         } else {
             query = Reservation.find().populate({
                 path: 'massageShop',
-                select: 'name address tel openTime closeTime waiatlistPosition'
+                select: 'name address tel openTime closeTime'
             });
         }
     }
