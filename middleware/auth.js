@@ -68,5 +68,5 @@ exports.role = async (req, res, next) => {
         return res.status(500).json({ masg: 'Server error' });
     }
   }
-  next();
+  else next();
 }
