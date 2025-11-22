@@ -10,13 +10,6 @@ const promoteWaitlist = async (massageShopId, reservationDate, waitlistPosition)
 
         const startOfSlot = new Date(reservationDate);
 
-        // const confirmedReservations = await Reservation.countDocuments({
-        //     massageShop: massageShopId,
-        //     reservationDate: startOfSlot,
-        //     // status: 'confirmed',
-        //     isWaitlist: false
-        // });
-
         // console.log("yes)")
         const result = await Reservation.updateMany(
           {
