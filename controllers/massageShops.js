@@ -100,7 +100,7 @@ exports.getMassageShops = async(req, res, next) => {
     const reqQuery = {...req.query};
 
     //Fields to exclude
-    const removeFields = ['select', 'sort'];
+    const removeFields = ['select', 'sort', 'page', 'limit'];
     // console.log(req.query);
 
     //Loop over remove fields and delete them from reqQuery
