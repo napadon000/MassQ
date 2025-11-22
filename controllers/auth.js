@@ -27,6 +27,12 @@ exports.register = async (req, res, next) => {
     const { name, telephone, email, password, role } = req.body;
 
     // Create user
+    //validate telephone and email unique
+    const existingUser = await User.findOne({ $or: [ { email }, { telephone } ] });
+    if (existingUser) {
+      return res.status(400).json({ success: false, msg: 'Email or telephone already in use' });
+    }
+
     const user = await User.create({
       name,
       telephone,
@@ -34,16 +40,10 @@ exports.register = async (req, res, next) => {
       password,
       role,
     });
-    //create token
-    // const token = user.getSignedJwtToken();
 
-    // res.status(200).json({
-    //   success: true,
-    //   token
-    // });
     sendTokenResponse(user,200,res);
   } catch (err) {
-    res.status(400).json({success: false});
+    res.status(400).json({success: false ,msg: err.message});
     console.log(err.stack);
   }
 };

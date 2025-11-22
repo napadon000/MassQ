@@ -9,15 +9,19 @@ const UserSchema = new mongoose.Schema({
     },
     telephone: {
         type: String,
-        required: [true, 'Please add a telephone number']
+        required: [true, 'Please add a telephone number'],
+        validate: {
+          validator: (v) => v && v.length === 10,
+          message: 'Telephone number must be exactly 10 characters long'
+        },
     },
     email: {
         type: String,
         required: [true, 'Please add an email'],
-            match: [
-            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-            'Please add a valid email'
-            ]
+        match: [
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+        'Please add a valid email'
+        ],
     },
     role: {
         type: String,
