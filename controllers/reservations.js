@@ -377,20 +377,19 @@ exports.deleteReservation = async(req, res, next) => {
                 data: {},
                 message: 'Reservation completed and moved to history'
             });
+        } else {
+          await History.create({
+              reservation: reservation._id,
+              user: reservation.user,
+              massageShop: reservation.massageShop,
+              reservationDate: reservation.reservationDate,
+              status: "cancelled",
+          });
         }
 
-        // Store reservation details before deletion
         const massageShopId = reservation.massageShop;
         const reservationDate = reservation.reservationDate;
         const wasConfirmed = reservation.isWaitlist === false;
-
-        await History.create({
-            reservation: reservation._id,
-            user: reservation.user,
-            massageShop: reservation.massageShop,
-            reservationDate: reservation.reservationDate,
-            status: "cancelled",
-        });
 
         // If it was a confirmed reservation, promote waitlist
         if (wasConfirmed) {
