@@ -106,11 +106,7 @@ exports.getMe = async (req, res, next) => {
 //@access Private
 exports.logout = async (req, res, next) => {
 
-  res.status(200).cookie("token", "", {
-    httpOnly: true,
-    expires: new Date(Date.now() + 10 * 1000),
-    secure: process.env.NODE_ENV === "production" ? true : false,
-  }).json({
+  res.status(200).clearCookie('token').json({
     success: true,
     msg: "User logged out successfully",
   });
