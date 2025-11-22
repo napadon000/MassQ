@@ -163,6 +163,9 @@ exports.createHistory = async (req, res, next) => {
 
 //@desc Update history
 //@route PUT /api/v1/histories/:id
+
+//@desc Update history
+//@route PUT /api/v1/histories/:id
 //@access Private
 exports.updateHistory = async (req, res, next) => {
     try {
