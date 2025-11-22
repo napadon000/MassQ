@@ -26,13 +26,13 @@ exports.register = async (req, res, next) => {
   try {
     const { name, telephone, email, password, role } = req.body;
 
-    // Create user
     //validate telephone and email unique
     const existingUser = await User.findOne({ $or: [ { email }, { telephone } ] });
     if (existingUser) {
       return res.status(400).json({ success: false, msg: 'Email or telephone already in use' });
     }
 
+    // Create user
     const user = await User.create({
       name,
       telephone,
