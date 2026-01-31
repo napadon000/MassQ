@@ -23,6 +23,30 @@ A RESTful API for managing massage shop reservations built with Node.js, Express
 - Admins can view, edit, and delete any reservation
 - Reservations are linked to specific massage shops and dates
 
+## Additional Features
+
+### Reservation History
+The system allows registered users to view their massage reservation history. The reservation history information includes:
+- Reservation date and time
+- Massage shop
+- Status (Completed and Cancelled)
+
+### Review + Sentiment Analysis
+The system provides review functionality with sentiment analysis:
+- Registered users can review their completed massage reservations that have not yet been reviewed
+- The system provides the rating of the review using a sentiment analysis model via API
+- Users can view ratings of massage shops
+
+### Timeslot + Waitlist
+The system provides comprehensive timeslot management:
+- Users can view available timeslots including:
+  - Number of capacity
+  - Availability
+  - Waitlist information for a massage shop by specifying the date
+- Registered users can reserve by specifying the date and time
+- Registered users can reserve fully booked slots by adding themselves to the waitlist
+- The system automatically moves waitlisted users up in the queue when someone cancels
+
 ## System Requirements
 
 1. Users must register by providing:
